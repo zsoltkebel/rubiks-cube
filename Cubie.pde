@@ -1,3 +1,5 @@
+final color BLACK = color(0, 0, 0);
+
 class Cubie {
   PMatrix3D matrix;
   int x = 0;
@@ -14,12 +16,12 @@ class Cubie {
     this.y = y;
     this.z = z;
 
-    faces[0] = new Face(new PVector(0, 0, -1), color(0, 0, 255));
-    faces[1] = new Face(new PVector(0, 0, 1), color(0, 255, 0));
-    faces[2] = new Face(new PVector(0, 1, 0), color(255, 255, 255));
-    faces[3] = new Face(new PVector(0, -1, 0), color(255, 255, 0));
-    faces[4] = new Face(new PVector(1, 0, 0), color(255, 150, 0));
-    faces[5] = new Face(new PVector(-1, 0, 0), color(255, 0, 0));
+    faces[0] = new Face(new PVector(0, 0, -1), z == -1 ? color(0, 0, 255) : BLACK);
+    faces[1] = new Face(new PVector(0, 0, 1), z == 1 ? color(0, 255, 0) : BLACK);
+    faces[2] = new Face(new PVector(0, 1, 0), y == 1 ? color(255, 255, 255) : BLACK);
+    faces[3] = new Face(new PVector(0, -1, 0), y == -1 ? color(255, 255, 0) : BLACK);
+    faces[4] = new Face(new PVector(1, 0, 0), x == 1 ? color(255, 150, 0) : BLACK);
+    faces[5] = new Face(new PVector(-1, 0, 0), x == -1 ? color(255, 0, 0) : BLACK);
   }
   
   void turnFacesZ(int dir) {

@@ -1,17 +1,20 @@
-// void keyPressed() {
-//     applyMove(key);
-// }
+void keyPressed() {
+    currentMove.start();
+    // applyMove(key);
+}
 
 void applyMove(char move) {
   switch (move) {
     case 'f':
-        turnZ(1, 1);
+        currentMove = allMoves[8];
+        currentMove.start();
         break;
     case 'F':
         turnZ(1, -1);
         break;
     case 'b':
-        turnZ(-1, 1);
+        currentMove = allMoves[10];
+        currentMove.start();
         break;
     case 'B':
         turnZ(-1, -1);

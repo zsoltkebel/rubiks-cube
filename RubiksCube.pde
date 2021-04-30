@@ -2,15 +2,32 @@ import peasy.*;
 
 PeasyCam cam;
 
+float speed = 0.5;
 int dim = 3;
 Cubie[] cube = new Cubie[dim*dim*dim];
 
-String[] allMoves = {"f", "b", "u", "d", "l", "r"};
-String sequence = "";
+Move[] allMoves = new Move[] {
+  new Move(0, 1, 0, 1),     // DOWN
+  new Move(0, 1, 0, -1),    // DOWN anti
+  new Move(0, -1, 0, 1),    // UP
+  new Move(0, -1, 0, -1),   // UP anti
+  new Move(1, 0, 0, 1),     // RIGHT
+  new Move(1, 0, 0, -1),    // RIGHT anti
+  new Move(-1, 0, 0, 1),    // LEFT
+  new Move(-1, 0, 0, -1),   // LEFT anti
+  new Move(0, 0, 1, 1),     // FRONT
+  new Move(0, 0, 1, -1),    // FRONT anti
+  new Move(0, 0, -1, 1),    // BACK
+  new Move(0, 0, -1, -1),   // BACK anti
+};
+ArrayList<Move> sequence = new ArrayList<Move>();
 int counter = 0;
+
+Move currentMove;
 
 void setup() {
   size(600, 600, P3D);
+  // fullScreen(P3D);
   cam = new PeasyCam(this, 400);
   int index = 0;
   for (int x = -1; x <= 1; x++) {
@@ -24,45 +41,58 @@ void setup() {
     }
   }
   
-  for(int i = 0; i < 200; i++) {
+  // initiating the sequence of moves
+  for(int i = 0; i < 50; i++) {
     int r = int(random(allMoves.length));
-    if (random(1) < 0.5) {
-      sequence += allMoves[r];
-    } else {
-      sequence += allMoves[r].toUpperCase();
-    }
+    Move m = allMoves[r];
+    sequence.add(m);
   }
 
-  for (int i = sequence.length() - 1; i >= 0; i--) {
-    String nextMove = flipCase(sequence.charAt(i));
-    sequence += nextMove;
+  currentMove = sequence.get(counter);
+
+  for (int i = sequence.size() - 1; i >= 0; i--) {
+    Move nextMove = sequence.get(i).copy();
+    nextMove.reverse();
+    sequence.add(nextMove);
   }
 
   println(sequence);
 }
 
-String flipCase(char c) {
-  String s = "" + c;
-  if (s.equals(s.toLowerCase())) {
-    return s.toUpperCase();
-  } else {
-    return s.toLowerCase();
-  }
-}
-
 void draw() {
   background(51);
 
-  
-  if (counter < sequence.length()) {
-    char move = sequence.charAt(counter);
-    applyMove(move);
-    counter++;
+  fill(255);
+  textSize(32);
+  text(counter, 100, 100);
+
+  currentMove.update();
+  if (currentMove.finished()) {
+    if (counter < sequence.size() - 1) {
+      counter++;
+      currentMove = sequence.get(counter);
+      currentMove.start();
+    }
   }
+
+  // if (counter < sequence.length()) {
+  //   char move = sequence.charAt(counter);
+  //   applyMove(move);
+  //   counter++;
+  // }
 
   scale(50);
   for (int i = 0; i < cube.length; i++) {
-        cube[i].show();
+    push();
+    if (abs(cube[i].z) > 0 && cube[i].z == currentMove.z) {
+        rotateZ(currentMove.angle);
+    } else if (abs(cube[i].x) > 0 && cube[i].x == currentMove.x) {
+        rotateX(currentMove.angle);
+    } else if (abs(cube[i].y) > 0 && cube[i].y == currentMove.y) {
+        rotateY(-currentMove.angle);
+    }
+    cube[i].show();
+    pop();
   }
 }
 
